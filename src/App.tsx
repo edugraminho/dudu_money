@@ -6,6 +6,7 @@ import Modal from "react-modal";
 import { NewTransModal } from "./components/NewTransModal";
 
 import { useState } from "react";
+import { TransactionsProvider } from "./hooks/useTransactions";
 
 Modal.setAppElement("#root");
 
@@ -20,7 +21,7 @@ export function App() {
     setIsNewTransModalOpen(false);
   }
   return (
-    <>
+    <TransactionsProvider>
       <Header onOpenNewTransModal={handleOpenNewTransModal} />
       <Dashboard />
       <NewTransModal
@@ -28,6 +29,6 @@ export function App() {
         onRequestClose={handleCloseNewTransModal}
       />
       <GlobalStyle />
-    </>
+    </TransactionsProvider>
   );
 }

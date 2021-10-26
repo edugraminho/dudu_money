@@ -1,11 +1,12 @@
 import { FormEvent, useState } from "react";
 import Modal from "react-modal";
+import { useTransactions } from "../../hooks/useTransactions";
+
 import closeImg from "../../assets/btn_fechar.svg";
 import incomeImg from "../../assets/entradas.svg";
 import outcomeImg from "../../assets/saidas.svg";
 
 import { Container, TransactionTypeContainer, RadioBox } from "./styles";
-import { api } from "../../services/api";
 
 interface NewTransModalProps {
   isOpen: boolean;
@@ -13,18 +14,27 @@ interface NewTransModalProps {
 }
 
 export function NewTransModal({ isOpen, onRequestClose }: NewTransModalProps) {
+  const { createTransaction } = useTransactions();
+
   const [title, setTitle] = useState("");
   const [value, setValue] = useState(0);
   const [category, setCategory] = useState("");
-
   const [type, setType] = useState("deposit");
 
-  function handleCreateNewTransaction(event: FormEvent) {
+  async function handleCreateNewTransaction(event: FormEvent) {
     event.preventDefault();
+    await createTransaction({
+      title,
+      value,
+      category,
+      type,
+    });
 
-    const data = { title, category, value, type };
-
-    api.post("/transactions", data);
+    setTitle("");
+    setValue(0);
+    setCategory("");
+    setType("desposit");
+    onRequestClose();
   }
 
   return (
@@ -69,8 +79,8 @@ export function NewTransModal({ isOpen, onRequestClose }: NewTransModalProps) {
 
             <RadioBox
               type="button"
-              onClick={() => setType("widthdraw")}
-              isActive={type === "widthdraw"}
+              onClick={() => setType("withdraw")}
+              isActive={type === "withdraw"}
               activeColor="red"
             >
               <img src={outcomeImg} alt="Saida" />
